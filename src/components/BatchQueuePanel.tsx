@@ -29,6 +29,7 @@ interface BatchQueuePanelProps {
   activePresetName: string;
   pitchSemitones: number;
   speed: number;
+  intensity?: number;
   isBatchProcessing: boolean;
   isDecodingBatch: boolean;
   previewingId: string | null;
@@ -47,6 +48,7 @@ export function BatchQueuePanel({
   activePresetName,
   pitchSemitones,
   speed,
+  intensity = 1,
   isBatchProcessing,
   isDecodingBatch,
   previewingId,
@@ -76,7 +78,7 @@ export function BatchQueuePanel({
           <span>
             Target: <strong className="font-semibold text-slate-800">{activePresetName}</strong>{' '}
             <span className="font-mono-num">
-              ({pitchSemitones > 0 ? `+${pitchSemitones}` : pitchSemitones} st · {speed.toFixed(2)}x)
+              ({pitchSemitones > 0 ? `+${pitchSemitones}` : pitchSemitones} st · {speed.toFixed(2)}x · {Math.round(intensity * 100)}%)
             </span>
           </span>
         </div>

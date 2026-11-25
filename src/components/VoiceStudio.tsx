@@ -30,10 +30,16 @@ import {
   deduplicateFilenames,
 } from '../audio/batch';
 import { createZipArchive } from '../audio/zipArchive';
-import { getPresetById, PresetId, VOICE_PRESETS } from '../audio/presets';
+import {
+  getPresetById,
+  PresetId,
+  VOICE_PRESETS,
+  VoicePreset,
+} from '../audio/presets';
 import { clampTrimRange, sliceAudioBuffer } from '../audio/trimmer';
 import { computeWaveformPeaks, formatTimecode } from '../audio/waveform';
 import { BatchQueueItem, BatchQueuePanel } from './BatchQueuePanel';
+import { EffectLibrary } from './EffectLibrary';
 import { FrequencySpectrum } from './FrequencySpectrum';
 import { WaveformPlayer } from './WaveformPlayer';
 
@@ -45,6 +51,21 @@ interface VoiceStudioProps {
 }
 
 const WAVEFORM_BARS = 84;
+const FAVORITES_STORAGE_KEY = 'voxforge_favorite_effects';
+const RECENT_STORAGE_KEY = 'voxforge_recent_effects';
+
+function loadStoredPresetIds(key: string): PresetId[] {
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    const validSet = new Set(VOICE_PRESETS.map((p) => p.id));
+    return parsed.filter((id): id is PresetId => validSet.has(id as PresetId));
+  } catch {
+    return [];
+  }
+}
 
 export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
   const [studioMode, setStudioMode] = useState<StudioMode>('single');
@@ -55,7 +76,18 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
   const [activePreset, setActivePreset] = useState<PresetId>('normal');
   const [pitchSemitones, setPitchSemitones] = useState<number>(0);
   const [speed, setSpeed] = useState<number>(1.0);
+  const [effectIntensity, setEffectIntensity] = useState<number>(1.0);
   const [abMode, setAbMode] = useState<ABSource>('processed');
+
+  const [favoriteIds, setFavoriteIds] = useState<PresetId[]>(() =>
+    loadStoredPresetIds(FAVORITES_STORAGE_KEY)
+  );
+  const [recentIds, setRecentIds] = useState<PresetId[]>(() =>
+    loadStoredPresetIds(RECENT_STORAGE_KEY)
+  );
+  const [previewingPresetId, setPreviewingPresetId] = useState<PresetId | null>(
+    null
+  );
 
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recordingSeconds, setRecordingSeconds] = useState<number>(0);
@@ -128,11 +160,12 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
     return playbackAnalyserRef.current;
   }, []);
 
-  // Defer DSP slider updates so dragging trim/pitch/speed stays smooth on mobile & desktop
+  // Defer DSP slider updates so dragging trim/pitch/speed/intensity stays smooth on mobile & desktop
   const deferredTrimStart = useDeferredValue(trimStart);
   const deferredTrimEnd = useDeferredValue(trimEnd);
   const deferredPitchSemitones = useDeferredValue(pitchSemitones);
   const deferredSpeed = useDeferredValue(speed);
+  const deferredIntensity = useDeferredValue(effectIntensity);
 
   // Slice active trim region before applying pitch, speed, and voice effects
   const trimmedSourceBuffer = useMemo(() => {
@@ -140,7 +173,7 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
     return sliceAudioBuffer(null, sourceBuffer, deferredTrimStart, deferredTrimEnd);
   }, [sourceBuffer, deferredTrimStart, deferredTrimEnd]);
 
-  // Precompute processed pitch/speed AudioBuffer separately from A/B monitor state
+  // Precompute processed pitch/speed/pre-DSP AudioBuffer separately from A/B monitor state
   // so toggling between Original (A) and Processed (B) is instantaneous with zero DSP lag
   const processedWetBuffer = useMemo(() => {
     if (!trimmedSourceBuffer) return null;
@@ -148,9 +181,17 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
       null,
       trimmedSourceBuffer,
       deferredPitchSemitones,
-      deferredSpeed
+      deferredSpeed,
+      activePreset,
+      deferredIntensity
     );
-  }, [trimmedSourceBuffer, deferredPitchSemitones, deferredSpeed]);
+  }, [
+    trimmedSourceBuffer,
+    deferredPitchSemitones,
+    deferredSpeed,
+    activePreset,
+    deferredIntensity,
+  ]);
 
   const activePlaybackBuffer =
     abMode === 'original' ? trimmedSourceBuffer : processedWetBuffer;
@@ -181,6 +222,7 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
     }
     setIsPlaying(false);
     setPreviewingBatchId(null);
+    setPreviewingPresetId(null);
     if (resetPosition) {
       setCurrentTime(0);
     }
@@ -235,19 +277,21 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
       antiClickGain.gain.linearRampToValueAtTime(1.0, now + 0.012);
       antiClickGain.connect(analyser);
 
-      const { stopOscillators } = buildEffectGraph(
+      const activeGraphIntensity = targetMode === 'original' ? 1.0 : effectIntensity;
+      const { cleanup } = buildEffectGraph(
         ctx,
         source,
         antiClickGain,
         effectMode,
         now,
-        remaining
+        remaining,
+        activeGraphIntensity
       );
 
       playbackRef.current = {
         source,
         stopOscillators: () => {
-          stopOscillators();
+          cleanup();
           try {
             antiClickGain.disconnect();
           } catch {
@@ -289,6 +333,7 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
       trimmedSourceBuffer,
       processedWetBuffer,
       activePreset,
+      effectIntensity,
       getAudioContext,
       getPlaybackAnalyser,
       stopPlayback,
@@ -399,24 +444,146 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
     );
   }, []);
 
-  const handleSelectPreset = (presetId: PresetId) => {
-    const preset = getPresetById(presetId);
-    setActivePreset(preset.id);
-    setPitchSemitones(preset.pitchSemitones);
-    setSpeed(preset.speed);
-    setAbMode('processed');
-    setErrorMessage(null);
-    markBatchOutdated();
-    setStatusMessage(`Applied ${preset.name} effect.`);
-  };
+  const handleToggleFavorite = useCallback((presetId: PresetId) => {
+    setFavoriteIds((prev) => {
+      const next = prev.includes(presetId)
+        ? prev.filter((id) => id !== presetId)
+        : [presetId, ...prev];
+      try {
+        window.localStorage.setItem(
+          FAVORITES_STORAGE_KEY,
+          JSON.stringify(next)
+        );
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+  }, []);
+
+  const recordRecentPreset = useCallback((presetId: PresetId) => {
+    setRecentIds((prev) => {
+      const next = [presetId, ...prev.filter((id) => id !== presetId)].slice(
+        0,
+        6
+      );
+      try {
+        window.localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+  }, []);
+
+  const handleSelectPreset = useCallback(
+    (presetId: PresetId) => {
+      const preset = getPresetById(presetId);
+      setActivePreset(preset.id);
+      setPitchSemitones(preset.pitchSemitones);
+      setSpeed(preset.speed);
+      setEffectIntensity(preset.defaultIntensity ?? 1.0);
+      setAbMode('processed');
+      setErrorMessage(null);
+      markBatchOutdated();
+      recordRecentPreset(preset.id);
+      setStatusMessage(`Applied ${preset.name} effect.`);
+    },
+    [markBatchOutdated, recordRecentPreset]
+  );
+
+  const handlePreviewPresetCard = useCallback(
+    (preset: VoicePreset) => {
+      if (previewingPresetId === preset.id) {
+        stopPlayback(false);
+        return;
+      }
+
+      stopPlayback(false);
+      setErrorMessage(null);
+      const ctx = getAudioContext();
+
+      let baseClip = trimmedSourceBuffer;
+      if (!baseClip) {
+        const demo = createDemoVoiceBuffer(ctx);
+        setSourceBuffer(demo);
+        setSourceName('Studio Demo Voice Clip');
+        setTrimStart(0);
+        setTrimEnd(Math.round(demo.duration * 100) / 100);
+        baseClip = demo;
+      }
+
+      const previewBuf = buildPitchSpeedBuffer(
+        ctx,
+        baseClip,
+        preset.pitchSemitones,
+        preset.speed,
+        preset.id,
+        1.0
+      );
+
+      const source = ctx.createBufferSource();
+      source.buffer = previewBuf;
+      const now = ctx.currentTime;
+      const analyser = getPlaybackAnalyser(ctx);
+
+      const antiClick = ctx.createGain();
+      antiClick.gain.setValueAtTime(0.01, now);
+      antiClick.gain.linearRampToValueAtTime(1.0, now + 0.012);
+      antiClick.connect(analyser);
+
+      const { cleanup } = buildEffectGraph(
+        ctx,
+        source,
+        antiClick,
+        preset.id,
+        now,
+        previewBuf.duration,
+        1.0
+      );
+
+      playbackRef.current = {
+        source,
+        stopOscillators: () => {
+          cleanup();
+          try {
+            antiClick.disconnect();
+          } catch {
+            // ignore disconnect errors
+          }
+        },
+        startedAtCtxTime: now,
+        offsetAtStart: 0,
+        duration: previewBuf.duration,
+      };
+
+      source.onended = () => {
+        if (playbackRef.current?.source === source) {
+          stopPlayback(false);
+        }
+      };
+
+      source.start(now);
+      setIsPlaying(true);
+      setPreviewingPresetId(preset.id);
+      setStatusMessage(`Previewing ${preset.name}...`);
+    },
+    [
+      previewingPresetId,
+      trimmedSourceBuffer,
+      getAudioContext,
+      getPlaybackAnalyser,
+      stopPlayback,
+    ]
+  );
 
   // If user tweaks preset/sliders/trim while playing, stop playback cleanly so they don't hear stale buffer
   useEffect(() => {
-    if (isPlaying || previewingBatchId !== null) {
+    if (isPlaying || previewingBatchId !== null || previewingPresetId !== null) {
       stopPlayback(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePreset, pitchSemitones, speed, trimStart, trimEnd]);
+  }, [activePreset, pitchSemitones, speed, effectIntensity, trimStart, trimEnd]);
 
   const handleLoadDemo = useCallback(() => {
     stopPlayback(true);
@@ -569,6 +736,7 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
             presetId: activePreset,
             pitchSemitones,
             speed,
+            intensity: effectIntensity,
           }
         );
         successCount += 1;
@@ -682,22 +850,25 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
         ctx,
         item.sourceBuffer,
         pitchSemitones,
-        speed
+        speed,
+        activePreset,
+        effectIntensity
       );
       const source = ctx.createBufferSource();
       source.buffer = shifted;
       const now = ctx.currentTime;
-      const { stopOscillators } = buildEffectGraph(
+      const { cleanup } = buildEffectGraph(
         ctx,
         source,
         analyser,
         activePreset,
         now,
-        shifted.duration
+        shifted.duration,
+        effectIntensity
       );
       playbackRef.current = {
         source,
-        stopOscillators,
+        stopOscillators: cleanup,
         startedAtCtxTime: now,
         offsetAtStart: 0,
         duration: shifted.duration,
@@ -910,6 +1081,7 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
         presetId: activePreset,
         pitchSemitones,
         speed,
+        intensity: effectIntensity,
       });
 
       const url = URL.createObjectURL(wavBlob);
@@ -1345,6 +1517,7 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
             activePresetName={activePresetObj.name}
             pitchSemitones={pitchSemitones}
             speed={speed}
+            intensity={effectIntensity}
             isBatchProcessing={isBatchProcessing}
             isDecodingBatch={isDecodingBatch}
             previewingId={previewingBatchId}
@@ -1375,69 +1548,36 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
         </div>
       )}
 
-      {/* Presets & Manual Sliders */}
+      {/* Effect Library & Manual Sliders */}
       <div className="mt-7 grid grid-cols-1 gap-8 border-t border-slate-200 pt-7 lg:grid-cols-12">
-        {/* Preset Selector (8 cols) */}
+        {/* Searchable Categorized 32-Effect Library (8 cols) */}
         <div className="lg:col-span-8">
-          <div className="mb-3 flex items-baseline justify-between gap-4">
+          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="font-display text-base font-semibold text-slate-900">
-              Voice Effect Presets
+              Voice Effect Library ({VOICE_PRESETS.length})
             </h3>
             <span className="text-xs text-slate-500">
-              Active: <strong className="font-semibold text-slate-800">{activePresetObj.name}</strong>
+              Active:{' '}
+              <strong className="font-semibold text-slate-800">
+                {activePresetObj.name}
+              </strong>
               {isCustomSliders ? ' · Tuned' : ''}
             </span>
           </div>
 
-          <div
-            role="radiogroup"
-            aria-label="Voice effect presets"
-            className="grid grid-cols-1 gap-2.5 sm:grid-cols-2"
-          >
-            {VOICE_PRESETS.map((preset) => {
-              const selected = activePreset === preset.id;
-              const isNormal = preset.id === 'normal';
-              return (
-                <button
-                  key={preset.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  onClick={() => handleSelectPreset(preset.id)}
-                  className={`flex flex-col items-start justify-between rounded-xl border p-3.5 text-left transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 ${
-                    isNormal ? 'sm:col-span-2 min-h-[64px]' : 'min-h-[82px]'
-                  } ${
-                    selected
-                      ? 'border-blue-700 bg-blue-50/60'
-                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/70'
-                  }`}
-                >
-                  <div className="flex w-full items-center justify-between gap-3">
-                    <span
-                      className={`text-sm font-semibold whitespace-nowrap ${
-                        selected ? 'text-blue-900' : 'text-slate-900'
-                      }`}
-                    >
-                      {preset.name}
-                    </span>
-                    <span className="font-mono-num text-[11px] text-slate-500 whitespace-nowrap shrink-0">
-                      {preset.pitchSemitones > 0
-                        ? `+${preset.pitchSemitones}`
-                        : preset.pitchSemitones}{' '}
-                      st · {preset.speed.toFixed(2)}x
-                    </span>
-                  </div>
-                  <p className="mt-1 text-xs leading-relaxed text-slate-600">
-                    {preset.description}
-                  </p>
-                </button>
-              );
-            })}
-          </div>
+          <EffectLibrary
+            activePreset={activePreset}
+            previewingPresetId={previewingPresetId}
+            favoriteIds={favoriteIds}
+            recentIds={recentIds}
+            onPreviewPreset={handlePreviewPresetCard}
+            onApplyPreset={(preset) => handleSelectPreset(preset.id)}
+            onToggleFavorite={handleToggleFavorite}
+          />
         </div>
 
-        {/* Manual Pitch & Speed Sliders (4 cols) */}
-        <div className="lg:col-span-4 lg:border-l lg:border-slate-200 lg:pl-7">
+        {/* Manual Pitch, Speed & Intensity Sliders (4 cols) */}
+        <div className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start lg:border-l lg:border-slate-200 lg:pl-7">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h3 className="font-display text-base font-semibold text-slate-900">
               Manual Controls
@@ -1525,8 +1665,49 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
               </div>
             </div>
 
+            <div>
+              <div className="mb-2 flex items-center justify-between text-sm">
+                <label
+                  htmlFor="intensity-slider"
+                  className="font-medium text-slate-800"
+                >
+                  Effect Intensity
+                </label>
+                <span
+                  data-testid="intensity-readout"
+                  className="font-mono-num text-sm font-semibold text-slate-900"
+                >
+                  {activePreset === 'normal'
+                    ? 'Clean'
+                    : `${Math.round(effectIntensity * 100)}%`}
+                </span>
+              </div>
+              <input
+                id="intensity-slider"
+                type="range"
+                min={0}
+                max={100}
+                step={5}
+                disabled={activePreset === 'normal'}
+                value={Math.round(effectIntensity * 100)}
+                onChange={(e) => {
+                  setAbMode('processed');
+                  setEffectIntensity(parseFloat(e.target.value) / 100);
+                  markBatchOutdated();
+                }}
+                className="studio-slider w-full cursor-pointer disabled:opacity-40"
+              />
+              <div className="mt-1.5 flex justify-between font-mono-num text-[11px] text-slate-400">
+                <span>0%</span>
+                <span>50%</span>
+                <span>100%</span>
+              </div>
+            </div>
+
             <div className="border-t border-slate-100 pt-4 text-xs leading-relaxed text-slate-500">
-              Pitch and speed adjust independently using browser-native WSOLA time-stretching, preserving clarity before WAV export.
+              Pitch, speed, and effect intensity process locally via WSOLA
+              time-stretching and multi-node Web Audio DSP before 16-bit WAV
+              export.
             </div>
           </div>
         </div>

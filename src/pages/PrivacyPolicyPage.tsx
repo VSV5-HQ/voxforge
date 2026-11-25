@@ -54,12 +54,26 @@ export function PrivacyPolicyPage() {
 
         <section className="border-t border-slate-200 pt-7">
           <h2 className="font-display text-xl font-bold text-slate-900">
-            4. Browser Storage & Cookies
+            4. Browser Storage &amp; Cookies
           </h2>
           <p className="mt-2">
             VoxForge does not use advertising trackers or third-party behavioral
             profiling cookies. Standard browser caching may store static site
             assets locally so the studio loads quickly on repeat visits.
+          </p>
+        </section>
+
+        <section className="border-t border-slate-200 pt-7">
+          <h2 className="font-display text-xl font-bold text-slate-900">
+            5. Optional Account Profiles
+          </h2>
+          <p className="mt-2">
+            Using the Voice Studio does not require an account. If you choose to
+            create a VoxForge account, authentication is handled by Firebase
+            Authentication and only your user ID, full name, email address, and
+            account creation timestamp are stored in your private Firestore
+            profile. Passwords are never stored in Firestore, and audio files
+            are still never uploaded.
           </p>
         </section>
       </div>

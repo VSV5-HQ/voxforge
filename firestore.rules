@@ -1,0 +1,87 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened primitive helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidEmailMatch(emailValue) {
+      return request.auth.token.email != null
+        && emailValue is string
+        && emailValue.size() >= 3
+        && emailValue.size() <= 254
+        && emailValue.lower() == request.auth.token.email.lower();
+    }
+
+    // Strict schema blueprint matching firebase-blueprint.json UserProfile
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'fullName', 'email', 'createdAt'])
+        && data.keys().hasOnly(['uid', 'fullName', 'email', 'createdAt'])
+        && isValidId(data.uid)
+        && data.uid == request.auth.uid
+        && data.fullName is string
+        && data.fullName.size() >= 1
+        && data.fullName.size() <= 100
+        && data.email is string
+        && data.email.size() >= 3
+        && data.email.size() <= 254
+        && data.createdAt is timestamp;
+    }
+
+    function isProfileNameUpdateAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly(['fullName']);
+    }
+
+    function isProfileSyncAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly(['fullName', 'email'])
+        && isValidEmailMatch(incoming().email);
+    }
+
+    // Private user profiles: owner-only access, zero listing, immutable uid & createdAt
+    match /users/{userId} {
+      allow get: if isSignedIn() && isValidId(userId) && isOwner(userId);
+      allow list: if false;
+
+      allow create: if isSignedIn()
+        && isValidId(userId)
+        && isOwner(userId)
+        && isValidUserProfile(incoming())
+        && incoming().uid == userId
+        && incoming().createdAt == request.time
+        && isValidEmailMatch(incoming().email);
+
+      allow update: if isSignedIn()
+        && isValidUserProfile(incoming())
+        && isValidId(userId)
+        && isOwner(userId)
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && (isProfileNameUpdateAction() || isProfileSyncAction());
+
+      allow delete: if isSignedIn() && isValidId(userId) && isOwner(userId);
+    }
+  }
+}
