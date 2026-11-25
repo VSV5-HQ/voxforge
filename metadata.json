@@ -1,0 +1,6 @@
+{
+  "name": "VoxForge",
+  "description": "Free online voice changer powered by the browser Web Audio API. Record or upload audio, apply instant voice presets, adjust pitch and speed, and export WAV files locally.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": []
+}
