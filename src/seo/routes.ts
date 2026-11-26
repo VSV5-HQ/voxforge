@@ -15,13 +15,15 @@ export interface RouteMeta {
   description: string;
 }
 
+export const SITE_URL = 'https://voxforge-6an.pages.dev';
+
 export const ROUTES: Record<RoutePath, RouteMeta> = {
   '/': {
     path: '/',
     label: 'Home',
-    title: 'VoxForge – Free Online Voice Changer Studio',
+    title: 'VoxForge – AI Voice Cloning and Voice Generation Platform',
     description:
-      'Transform your voice online with VoxForge. Record or upload MP3/WAV audio, apply instant Deep, Chipmunk, Robot, Cave Echo, Radio, and Alien effects, and export WAV.',
+      'VoxForge is an AI voice cloning and voice generation studio in your browser. Apply 32+ real-time voice effects, tune pitch, and export WAV files locally.',
   },
   '/how-it-works': {
     path: '/how-it-works',
@@ -102,9 +104,11 @@ export function applyPageSeo(path: RoutePath): void {
     if (el) el.content = content;
   };
 
+  const canonicalUrl = `${SITE_URL}${meta.path}`;
   setMeta('meta[name="description"]', meta.description);
   setMeta('meta[property="og:title"]', meta.title);
   setMeta('meta[property="og:description"]', meta.description);
+  setMeta('meta[property="og:url"]', canonicalUrl);
   setMeta('meta[name="twitter:title"]', meta.title);
   setMeta('meta[name="twitter:description"]', meta.description);
 
@@ -114,5 +118,5 @@ export function applyPageSeo(path: RoutePath): void {
     canonical.rel = 'canonical';
     document.head.appendChild(canonical);
   }
-  canonical.href = `${window.location.origin}${meta.path}`;
+  canonical.href = canonicalUrl;
 }
