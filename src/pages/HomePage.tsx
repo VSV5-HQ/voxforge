@@ -13,15 +13,15 @@ export function HomePage({ studioRef, demoTrigger, onNavigate }: HomePageProps) 
       {/* Focused Hero Header */}
       <div className="mb-8 max-w-3xl">
         <p className="text-sm font-medium text-blue-700">
-          Browser Web Audio Studio · Zero Uploads · Free WAV Export
+          VoxNexa Audio Studio · Your Voice. Your Creativity. Unlimited Possibilities.
         </p>
         <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl [text-wrap:balance]">
           Transform your voice in seconds, right in your browser.
         </h1>
         <p className="mt-3 text-base leading-relaxed text-slate-600 sm:text-lg">
           Record from your microphone or drop an MP3 or WAV file. Apply instant
-          studio presets, dial in pitch and speed independently, preview the
-          waveform, and export clean 16-bit WAV audio locally.
+          VoxNexa studio presets, dial in pitch and speed independently, preview
+          the waveform, and export clean 16-bit WAV audio locally.
         </p>
       </div>
 

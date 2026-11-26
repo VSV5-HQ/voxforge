@@ -59,7 +59,7 @@ export function DashboardPage({
   useEffect(() => {
     if (authReady && !user) {
       onUnauthenticatedRedirect(
-        'Please sign in to access your VoxForge account dashboard.'
+        'Please sign in to access your VoxNexa account dashboard.'
       );
       onNavigate('/login');
     }
@@ -238,7 +238,7 @@ export function DashboardPage({
       <div className="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs font-medium text-slate-500">
-            VoxForge / Account Dashboard
+            VoxNexa / Account Dashboard
           </p>
           <h1
             id="dashboard-heading"
@@ -520,7 +520,7 @@ export function DashboardPage({
               Voice Studio Access
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              Launch the VoxForge Voice Studio to record microphone audio, upload
+              Launch the VoxNexa Voice Studio to record microphone audio, upload
               MP3/WAV files, trim clips, run batch exports, and download 16-bit
               WAV audio locally.
             </p>
@@ -530,7 +530,7 @@ export function DashboardPage({
               className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 min-h-[44px] cursor-pointer"
             >
               <AudioWaveform className="h-4 w-4" aria-hidden="true" />
-              Open VoxForge Voice Studio
+              Open VoxNexa Voice Studio
             </button>
           </div>
 

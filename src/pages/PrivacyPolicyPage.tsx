@@ -9,7 +9,7 @@ export function PrivacyPolicyPage() {
           Privacy Policy
         </h1>
         <p className="mt-3 text-base leading-relaxed text-slate-600">
-          VoxForge is engineered around local-first audio processing. Your voice
+          VoxNexa is engineered around local-first audio processing. Your voice
           recordings and uploaded audio files never leave your browser.
         </p>
       </header>
@@ -22,7 +22,7 @@ export function PrivacyPolicyPage() {
           <p className="mt-2">
             All audio decoding, pitch shifting, speed scaling, effect filtering,
             and WAV file encoding take place entirely inside your browser using
-            the Web Audio API and local device memory. VoxForge does not transmit
+            the Web Audio API and local device memory. VoxNexa does not transmit
             microphone streams or uploaded MP3/WAV files to any remote server.
           </p>
         </section>
@@ -57,7 +57,7 @@ export function PrivacyPolicyPage() {
             4. Browser Storage &amp; Cookies
           </h2>
           <p className="mt-2">
-            VoxForge does not use advertising trackers or third-party behavioral
+            VoxNexa does not use advertising trackers or third-party behavioral
             profiling cookies. Standard browser caching may store static site
             assets locally so the studio loads quickly on repeat visits.
           </p>
@@ -69,7 +69,7 @@ export function PrivacyPolicyPage() {
           </h2>
           <p className="mt-2">
             Using the Voice Studio does not require an account. If you choose to
-            create a VoxForge account, authentication is handled by Firebase
+            create a VoxNexa account, authentication is handled by Firebase
             Authentication and only your user ID, full name, email address, and
             account creation timestamp are stored in your private Firestore
             profile. Passwords are never stored in Firestore, and audio files

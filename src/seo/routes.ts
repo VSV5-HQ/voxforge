@@ -21,58 +21,58 @@ export const ROUTES: Record<RoutePath, RouteMeta> = {
   '/': {
     path: '/',
     label: 'Home',
-    title: 'VoxForge – AI Voice Cloning and Voice Generation Platform',
+    title: 'VoxNexa – Online Voice Changer & Audio Studio',
     description:
-      'VoxForge is an AI voice cloning and voice generation studio in your browser. Apply 32+ real-time voice effects, tune pitch, and export WAV files locally.',
+      'Transform your voice with VoxNexa. Explore creative voice effects, pitch shifting, audio processing and instant WAV exports with our free browser-based audio studio.',
   },
   '/how-it-works': {
     path: '/how-it-works',
     label: 'How It Works',
-    title: 'How It Works – VoxForge Online Voice Changer',
+    title: 'How It Works – VoxNexa Online Voice Changer',
     description:
-      'Learn how VoxForge transforms audio locally in your browser using the Web Audio API, WSOLA pitch shifting, real-time effects, and instant WAV export.',
+      'Learn how VoxNexa transforms audio locally in your browser using the Web Audio API, WSOLA pitch shifting, real-time effects, and instant WAV export.',
   },
   '/privacy-policy': {
     path: '/privacy-policy',
     label: 'Privacy Policy',
-    title: 'Privacy Policy – VoxForge Local Audio Studio',
+    title: 'Privacy Policy – VoxNexa Local Audio Studio',
     description:
-      'VoxForge processes all microphone recordings and audio files locally inside your browser. Zero audio uploads and secure account profile protection.',
+      'VoxNexa processes all microphone recordings and audio files locally inside your browser. Zero audio uploads and secure account profile protection.',
   },
   '/terms-of-service': {
     path: '/terms-of-service',
     label: 'Terms of Service',
-    title: 'Terms of Service – VoxForge Online Voice Changer',
+    title: 'Terms of Service – VoxNexa Online Voice Changer',
     description:
-      'Read the VoxForge Terms of Service covering acceptable use, intellectual property, browser audio processing, and user account terms.',
+      'Read the VoxNexa Terms of Service covering acceptable use, intellectual property, browser audio processing, and user account terms.',
   },
   '/contact': {
     path: '/contact',
     label: 'Contact Us',
-    title: 'Contact Us – VoxForge Audio Support',
+    title: 'Contact Us – VoxNexa Audio Support',
     description:
-      'Have questions, feedback, or feature requests for VoxForge? Reach out to our team through the online contact form or direct support email.',
+      'Have questions, feedback, or feature requests for VoxNexa? Reach out to our team through the online contact form or direct support email.',
   },
   '/login': {
     path: '/login',
     label: 'Login',
-    title: 'Login – VoxForge Account',
+    title: 'Login – VoxNexa Account',
     description:
-      'Sign in to your VoxForge account to access your personalized creator dashboard while keeping audio processing local to your browser.',
+      'Sign in to your VoxNexa account to access your personalized creator dashboard while keeping audio processing local to your browser.',
   },
   '/register': {
     path: '/register',
     label: 'Create Account',
-    title: 'Create Account – VoxForge',
+    title: 'Create Account – VoxNexa',
     description:
-      'Create a free VoxForge account to manage your profile and access your personalized audio studio dashboard.',
+      'Create a free VoxNexa account to manage your profile and access your personalized audio studio dashboard.',
   },
   '/dashboard': {
     path: '/dashboard',
     label: 'Dashboard',
-    title: 'Account Dashboard – VoxForge',
+    title: 'Account Dashboard – VoxNexa',
     description:
-      'Manage your VoxForge account details, verify your email, and jump directly back into the Web Audio Voice Studio.',
+      'Manage your VoxNexa account details, verify your email, and jump directly back into the Web Audio Voice Studio.',
   },
 };
 

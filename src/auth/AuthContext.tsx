@@ -127,14 +127,14 @@ async function ensureUserProfileDoc(
     overrideName ||
       firebaseUser.displayName ||
       resolvedEmail.split('@')[0] ||
-      'VoxForge User'
+      'VoxNexa User'
   );
 
   if (!existingSnap.exists()) {
     try {
       await setDoc(ref, {
         uid: firebaseUser.uid,
-        fullName: resolvedName || 'VoxForge User',
+        fullName: resolvedName || 'VoxNexa User',
         email: resolvedEmail,
         createdAt: serverTimestamp(),
       });
@@ -203,7 +203,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             fullName:
               typeof data.fullName === 'string'
                 ? data.fullName
-                : user.displayName || 'VoxForge User',
+                : user.displayName || 'VoxNexa User',
             email:
               typeof data.email === 'string'
                 ? data.email
@@ -216,7 +216,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           setProfile({
             uid: user.uid,
-            fullName: user.displayName || 'VoxForge User',
+            fullName: user.displayName || 'VoxNexa User',
             email: user.email || '',
             createdAt: parseCreatedAt(null, user.metadata.creationTime),
           });

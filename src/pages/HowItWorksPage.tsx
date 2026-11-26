@@ -12,10 +12,10 @@ export function HowItWorksPage({ onNavigate }: HowItWorksPageProps) {
           Signal Processing · Web Audio Architecture
         </p>
         <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl [text-wrap:balance]">
-          How VoxForge transforms your voice locally
+          How VoxNexa transforms your voice locally
         </h1>
         <p className="mt-3 text-base leading-relaxed text-slate-600">
-          VoxForge uses your browser&apos;s native Web Audio API and an offline
+          VoxNexa uses your browser&apos;s native Web Audio API and an offline
           digital signal processing pipeline. No cloud servers, paid APIs, or
           audio uploads are ever required.
         </p>
@@ -28,7 +28,7 @@ export function HowItWorksPage({ onNavigate }: HowItWorksPageProps) {
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-base">
             Changing playback rate alone alters pitch and tempo simultaneously.
-            VoxForge separates them using Waveform Similarity Overlap-Add
+            VoxNexa separates them using Waveform Similarity Overlap-Add
             (WSOLA) time-stretching paired with linear resampling. You can lower
             pitch by up to 12 semitones without slowing speech down, or double
             speed without creating a chipmunk effect.
@@ -83,7 +83,7 @@ export function HowItWorksPage({ onNavigate }: HowItWorksPageProps) {
             03. Offline WAV Rendering
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-base">
-            When you click Download WAV, VoxForge rebuilds the exact same filter
+            When you click Download WAV, VoxNexa rebuilds the exact same filter
             graph inside an{' '}
             <code className="font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">
               OfflineAudioContext

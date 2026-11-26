@@ -80,7 +80,7 @@ export function LoginPage({
       await loginWithEmail({ email, password, rememberMe });
       const msg = 'Login successful. Redirecting to your dashboard...';
       setSuccessMessage(msg);
-      onAuthSuccess?.('Welcome back! You are now signed in to VoxForge.');
+      onAuthSuccess?.('Welcome back! You are now signed in to VoxNexa.');
       setTimeout(() => {
         onNavigate('/dashboard');
       }, 350);
@@ -153,12 +153,12 @@ export function LoginPage({
     >
       <div className="mx-auto max-w-md">
         <div className="mb-6 text-center">
-          <p className="text-sm font-medium text-blue-700">VoxForge Account</p>
+          <p className="text-sm font-medium text-blue-700">VoxNexa Account</p>
           <h1
             id="auth-heading"
             className="mt-1.5 font-display text-3xl font-bold tracking-tight text-slate-950"
           >
-            {resetMode ? 'Reset your password' : 'Sign in to VoxForge'}
+            {resetMode ? 'Reset your password' : 'Sign in to VoxNexa'}
           </h1>
           <p className="mt-2 text-sm text-slate-600">
             {resetMode

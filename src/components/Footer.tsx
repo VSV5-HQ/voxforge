@@ -21,14 +21,31 @@ export function Footer({ onNavigate }: FooterProps) {
             <a
               href="/"
               onClick={(e) => handleLinkClick(e, '/')}
-              className="font-display text-lg font-bold tracking-tight text-slate-900"
+              className="inline-flex items-center gap-2 font-display text-lg font-bold tracking-tight text-slate-900"
             >
-              VoxForge
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-blue-700 to-blue-600 text-white">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="h-3.5 w-3.5"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="9" width="2.4" height="6" rx="1.2" fill="currentColor" opacity="0.85" />
+                  <rect x="7.5" y="5" width="2.4" height="14" rx="1.2" fill="currentColor" />
+                  <rect x="12" y="3" width="2.4" height="18" rx="1.2" fill="currentColor" />
+                  <rect x="16.5" y="6.5" width="2.4" height="11" rx="1.2" fill="currentColor" />
+                  <rect x="21" y="9.5" width="2.4" height="5" rx="1.2" fill="currentColor" opacity="0.85" />
+                </svg>
+              </span>
+              <span>VoxNexa</span>
             </a>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              Browser-native voice changer powered by the Web Audio API. Record,
-              transform, preview, and export WAV files without uploading audio to
-              external servers.
+            <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-blue-700">
+              Your Voice. Your Creativity. Unlimited Possibilities.
+            </p>
+            <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+              Browser-native online voice changer &amp; audio studio powered by
+              the Web Audio API. Record, transform, preview, and export WAV
+              files without uploading audio to external servers.
             </p>
           </div>
 
@@ -50,7 +67,7 @@ export function Footer({ onNavigate }: FooterProps) {
         </div>
 
         <div className="mt-8 flex flex-col gap-2 border-t border-slate-100 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} VoxForge. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} VoxNexa. All rights reserved.</p>
           <p>Web Audio API · 16-bit PCM WAV Export · 100% Client-Side</p>
         </div>
       </div>

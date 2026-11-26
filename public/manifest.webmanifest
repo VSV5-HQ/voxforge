@@ -1,0 +1,17 @@
+{
+  "name": "VoxNexa – Online Voice Changer & Audio Studio",
+  "short_name": "VoxNexa",
+  "description": "Your Voice. Your Creativity. Unlimited Possibilities. Transform your voice in the browser with real-time effects and instant WAV exports.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#1D4ED8",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

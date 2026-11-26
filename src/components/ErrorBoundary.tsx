@@ -62,7 +62,7 @@ export class ErrorBoundary extends Component<
               className="mt-5 inline-flex items-center justify-center gap-2 rounded-lg bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-800 cursor-pointer"
             >
               <RotateCcw className="h-4 w-4" aria-hidden="true" />
-              Return to VoxForge
+              Return to VoxNexa
             </button>
           </div>
         </div>

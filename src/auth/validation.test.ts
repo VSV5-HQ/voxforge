@@ -34,7 +34,7 @@ describe('Auth validation helpers', () => {
     assert.equal(evaluatePasswordStrength('short').meetsMinLength, false);
     assert.equal(evaluatePasswordStrength('short').label, 'Too weak');
     assert.equal(evaluatePasswordStrength('password123').meetsMinLength, true);
-    const strong = evaluatePasswordStrength('VoxForge!2026Audio');
+    const strong = evaluatePasswordStrength('VoxNexa!2026Audio');
     assert.equal(strong.score, 4);
     assert.equal(strong.label, 'Strong');
   });
@@ -46,7 +46,7 @@ describe('Auth validation helpers', () => {
     assert.ok(invalid.password);
 
     const valid = validateLoginForm({
-      email: 'creator@voxforge.app',
+      email: 'creator@voxnexa.app',
       password: 'Password123!',
     });
     assert.equal(hasFormErrors(valid), false);
@@ -55,7 +55,7 @@ describe('Auth validation helpers', () => {
   it('validates registration form matching passwords and terms checkbox', () => {
     const mismatch = validateRegisterForm({
       fullName: 'Alex Rivera',
-      email: 'alex@voxforge.app',
+      email: 'alex@voxnexa.app',
       password: 'Password123!',
       confirmPassword: 'Password123',
       acceptedTerms: false,
@@ -65,7 +65,7 @@ describe('Auth validation helpers', () => {
 
     const valid = validateRegisterForm({
       fullName: 'Alex Rivera',
-      email: 'alex@voxforge.app',
+      email: 'alex@voxnexa.app',
       password: 'Password123!',
       confirmPassword: 'Password123!',
       acceptedTerms: true,

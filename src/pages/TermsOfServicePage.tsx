@@ -9,7 +9,7 @@ export function TermsOfServicePage() {
           Terms of Service
         </h1>
         <p className="mt-3 text-base leading-relaxed text-slate-600">
-          By accessing or using VoxForge, you agree to the following terms
+          By accessing or using VoxNexa, you agree to the following terms
           governing browser-based audio transformation and WAV exports.
         </p>
       </header>
@@ -20,7 +20,7 @@ export function TermsOfServicePage() {
             1. Permitted Use
           </h2>
           <p className="mt-2">
-            VoxForge is provided for creative, educational, gaming, podcasting,
+            VoxNexa is provided for creative, educational, gaming, podcasting,
             and personal audio experimentation. You may freely download and use
             the WAV files you generate for personal or commercial projects,
             provided you own or hold the necessary rights to the source audio.
@@ -32,7 +32,7 @@ export function TermsOfServicePage() {
             2. Prohibited Conduct
           </h2>
           <p className="mt-2">
-            You agree not to use VoxForge to impersonate individuals for fraud,
+            You agree not to use VoxNexa to impersonate individuals for fraud,
             harassment, defamation, bypass voice-biometric authentication, or
             violate applicable privacy, wiretapping, or copyright laws.
           </p>
@@ -44,8 +44,8 @@ export function TermsOfServicePage() {
           </h2>
           <p className="mt-2">
             You retain 100% ownership and copyright over all recordings you make
-            and audio files you process in VoxForge. Because processing runs
-            locally in your browser, VoxForge claims no license or ownership
+            and audio files you process in VoxNexa. Because processing runs
+            locally in your browser, VoxNexa claims no license or ownership
             rights over your audio.
           </p>
         </section>
@@ -55,7 +55,7 @@ export function TermsOfServicePage() {
             4. Service Availability & Disclaimer
           </h2>
           <p className="mt-2">
-            VoxForge is provided &ldquo;as is&rdquo; without warranties of
+            VoxNexa is provided &ldquo;as is&rdquo; without warranties of
             uninterrupted availability. Audio codec support (such as MP3, WAV,
             OGG, or WebM) depends on your browser&apos;s built-in Web Audio API
             decoders.

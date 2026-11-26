@@ -37,13 +37,27 @@ export function Navbar({ currentPath, onNavigate, onPrimaryAction }: NavbarProps
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:gap-6">
-        {/* Zone 1: Wordmark */}
+        {/* Zone 1: Brand mark & wordmark */}
         <a
           href="/"
           onClick={(e) => handleLinkClick(e, '/')}
-          className="font-display text-xl font-bold tracking-tight text-slate-900 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 rounded"
+          className="inline-flex items-center gap-2.5 font-display text-xl font-bold tracking-tight text-slate-900 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 rounded"
         >
-          VoxForge
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-700 to-blue-600 text-white shadow-xs">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              className="h-4 w-4"
+              aria-hidden="true"
+            >
+              <rect x="3" y="9" width="2.4" height="6" rx="1.2" fill="currentColor" opacity="0.85" />
+              <rect x="7.5" y="5" width="2.4" height="14" rx="1.2" fill="currentColor" />
+              <rect x="12" y="3" width="2.4" height="18" rx="1.2" fill="currentColor" />
+              <rect x="16.5" y="6.5" width="2.4" height="11" rx="1.2" fill="currentColor" />
+              <rect x="21" y="9.5" width="2.4" height="5" rx="1.2" fill="currentColor" opacity="0.85" />
+            </svg>
+          </span>
+          <span>VoxNexa</span>
         </a>
 
         {/* Zone 2: Concise single-line navigation links */}

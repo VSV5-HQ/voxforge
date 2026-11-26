@@ -811,7 +811,7 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
     const zipBlob = new Blob([zipBytes.buffer as ArrayBuffer], {
       type: 'application/zip',
     });
-    const zipName = `voxforge-batch-${activePreset}.zip`;
+    const zipName = `voxnexa-batch-${activePreset}.zip`;
     triggerBlobDownload(zipBlob, zipName);
     const kb = Math.max(1, Math.round(zipBlob.size / 1024));
     setStatusMessage(`Downloaded ${zipName} (${ready.length} WAVs · ${kb} KB).`);
@@ -1088,14 +1088,14 @@ export function VoiceStudio({ studioRef, demoTrigger = 0 }: VoiceStudioProps) {
       const a = document.createElement('a');
       a.href = url;
       const slug = activePreset;
-      a.download = `voxforge-${slug}.wav`;
+      a.download = `voxnexa-${slug}.wav`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       setTimeout(() => URL.revokeObjectURL(url), 1000);
 
       const kb = Math.max(1, Math.round(wavBlob.size / 1024));
-      setStatusMessage(`Exported voxforge-${slug}.wav (${kb} KB).`);
+      setStatusMessage(`Exported voxnexa-${slug}.wav (${kb} KB).`);
     } catch {
       setErrorMessage('Failed to export WAV file. Please try again.');
     } finally {

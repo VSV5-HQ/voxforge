@@ -122,7 +122,7 @@ export function RegisterPage({ onNavigate, onAuthSuccess }: RegisterPageProps) {
     try {
       await loginWithGoogle();
       setSuccessMessage('Signed in with Google. Redirecting...');
-      onAuthSuccess?.('Your VoxForge account is ready.');
+      onAuthSuccess?.('Your VoxNexa account is ready.');
       setTimeout(() => {
         onNavigate('/dashboard');
       }, 250);
@@ -145,7 +145,7 @@ export function RegisterPage({ onNavigate, onAuthSuccess }: RegisterPageProps) {
       <div className="mx-auto max-w-md">
         <div className="mb-6 text-center">
           <p className="text-sm font-medium text-blue-700">
-            Free VoxForge Profile
+            Free VoxNexa Profile
           </p>
           <h1
             id="register-heading"
@@ -154,7 +154,7 @@ export function RegisterPage({ onNavigate, onAuthSuccess }: RegisterPageProps) {
             Create your account
           </h1>
           <p className="mt-2 text-sm text-slate-600">
-            Set up your VoxForge creator profile. Voice recordings always remain
+            Set up your VoxNexa creator profile. Voice recordings always remain
             private inside your browser.
           </p>
         </div>

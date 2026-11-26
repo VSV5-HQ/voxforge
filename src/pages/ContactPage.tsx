@@ -38,7 +38,7 @@ export function ContactPage() {
       return;
     }
 
-    const referenceId = `VF-${Math.floor(100000 + Math.random() * 900000)}`;
+    const referenceId = `VN-${Math.floor(100000 + Math.random() * 900000)}`;
     setSubmittedRef(referenceId);
   };
 
@@ -219,11 +219,11 @@ export function ContactPage() {
               anytime.
             </p>
             <a
-              href="mailto:support@voxforge.audio"
+              href="mailto:support@voxnexa.audio"
               className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-700 hover:underline underline-offset-4"
             >
               <Mail className="h-4 w-4" aria-hidden="true" />
-              support@voxforge.audio
+              support@voxnexa.audio
             </a>
           </div>
 
